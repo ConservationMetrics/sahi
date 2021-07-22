@@ -276,7 +276,12 @@ class ShapelyAnnotation:
         Accepts shapely polygon object and returns the intersection in ShapelyAnnotation format
         """
         # convert intersection polygon to list of tuples
-        intersection = self.multipolygon.intersection(polygon)
+        try:
+            intersection = self.multipolygon.intersection(polygon)
+        except:
+            # work around error with a polygon that was not working... 
+            intersection = self.multipolygon.buffer(0).intersection(polygon)
+
         # if polygon is box then set slice_box property
         if (
             len(polygon.exterior.xy[0]) == 5
