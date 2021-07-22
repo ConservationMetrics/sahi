@@ -103,8 +103,16 @@ def read_image_as_pil(image: Union[Image.Image, str, np.ndarray]):
     """
     # read image if str image path is provided
     if isinstance(image, str):
-        # read in image, cv2 fails on large files
-        image_pil = Image.open(image).convert("RGB")
+        ## read in image, cv2 fails on large files
+        # image_pil = Image.open(image).convert("RGB")
+       
+        # use skimage to read large tif file.  
+        # needed to install modules: tiffile, imagecodecs
+        from skimage.io import imread
+        # TODO: check if imread reads files as RGB or BGR? 
+        # also what happens with a 4 channel tif? RGBA, RGB+d, or 8-channel landsat?
+        image_sk=imread(image).astype(np.uint8)
+        image_pil=Image.fromarray(image_sk)
     elif isinstance(image, np.ndarray):
         if image.shape[0] < 5:  # image in CHW
             image = image[:, :, ::-1]
